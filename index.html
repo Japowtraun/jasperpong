@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jasper Tristan Pong</title>
+<meta name="description" content="Jasper Tristan Pong. Freeride skier and student in Innsbruck who takes things apart to see how they work.">
+<meta property="og:title" content="Jasper Tristan Pong">
+<meta property="og:description" content="Jasper Tristan Pong. Freeride skier and student in Innsbruck who takes things apart to see how they work.">
+<meta property="og:image" content="media/hero.jpg">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2307131f'/%3E%3Cpath d='M21 5C9 9 9 14 16 16s7 7-5 11' fill='none' stroke='%23ff3d7f' stroke-width='3.5' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Instrument+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Concept: one competition morning on one face. The page starts at blue hour, passes through
+   alpenglow and ends in full daylight on snow. Each band carries its own palette through the same tokens.
+   One magenta line is skied down the left lane across all three. */
+:root{
+  --display:"Bricolage Grotesque","Arial Black",Arial,sans-serif;
+  --body:"Instrument Sans","Helvetica Neue",Arial,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  --lane:clamp(34px,11vw,150px);
+  --max:1240px;
+  color-scheme:dark;
+}
+.night{--bg:#07131f;--ice:#eef4f7;--haze:#b9c9d4;--contour:#1d3a50;--panel:#0d2131;--signal:#ff3d7f;--glow:#ffb56b}
+.dawn{--bg:#2a1533;--ice:#fbf1f1;--haze:#d8c3cf;--contour:#51305a;--panel:#391f43;--signal:#ff5a90;--glow:#ffc57d}
+.day{--bg:#f0f4f6;--ice:#0d1b27;--haze:#465c6b;--contour:#cbd5dc;--panel:#e1e8ec;--signal:#dc1f66;--glow:#a8500c}
+*{box-sizing:border-box}
+html{height:100%}
+body{margin:0;min-height:100%;background:#07131f;font-family:var(--body);font-size:1.25rem;line-height:1.65;overflow-x:hidden}
+img,video,svg{max-width:100%}
+a{color:inherit;text-decoration-color:var(--signal);text-underline-offset:.2em}
+a:focus-visible,button:focus-visible{outline:2px solid var(--glow);outline-offset:3px}
+
+#fx{position:fixed;inset:0;width:100%;height:100%;z-index:6;pointer-events:none}
+#whiteout{position:fixed;inset:0;z-index:7;pointer-events:none;opacity:0;background:radial-gradient(circle at 50% 40%,#fff 0%,#eaf2f6 55%,rgba(234,242,246,.7) 100%)}
+#whiteout.go{animation:whiteout 1.7s ease-out}
+@keyframes whiteout{0%{opacity:0}18%{opacity:.92}100%{opacity:0}}
+
+.hud{position:fixed;top:0;left:0;right:0;z-index:5;display:flex;justify-content:space-between;gap:1rem;padding:.9rem clamp(16px,4vw,40px);font:500 .8125rem var(--mono);letter-spacing:.12em;text-transform:uppercase;color:#fff;mix-blend-mode:difference;pointer-events:none}
+.hud b{font-weight:500;font-variant-numeric:tabular-nums}
+
+.wrap{position:relative}
+#run{position:absolute;z-index:3;left:max(0px,calc((100% - var(--max)) / 2));top:0;width:var(--lane);overflow:visible;pointer-events:none}
+#run path{fill:none;stroke:#ff3d7f;stroke-width:3;stroke-linecap:round}
+#run circle{fill:#fff;stroke:#ff3d7f;stroke-width:3}
+
+.band{position:relative;background:var(--bg);color:var(--ice)}
+.band>.ridge{position:absolute;left:0;right:0;top:-79px;width:100%;height:80px;color:var(--bg);display:block}
+.dawn::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(80% 620px at 85% 420px,rgba(255,138,92,.4),rgba(255,90,144,.14) 45%,transparent 75%);-webkit-mask-image:linear-gradient(transparent,#000 260px);mask-image:linear-gradient(transparent,#000 260px)}
+.inner{position:relative;z-index:1;max-width:var(--max);margin:0 auto;padding:clamp(4rem,9vw,7rem) clamp(16px,4vw,48px) clamp(6rem,13vw,10rem) calc(var(--lane) + clamp(12px,2vw,28px));display:flex;flex-direction:column;gap:clamp(5rem,12vw,9rem)}
+.band:last-child .inner{padding-bottom:5rem}
+#terrain{position:absolute;left:0;top:0;width:100%;height:min(105vh,980px);pointer-events:none;-webkit-mask-image:linear-gradient(#000 55%,transparent);mask-image:linear-gradient(#000 55%,transparent)}
+
+.tag{font:500 .875rem var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--glow);margin:0}
+h1,h2,h3{font-family:var(--display);font-weight:800;line-height:.9;letter-spacing:-.025em;margin:0;text-wrap:balance}
+h1{font-size:clamp(3.25rem,min(11vw,15vh),8.5rem);text-transform:uppercase}
+h1 span{display:block;animation:rise .9s cubic-bezier(.2,.7,.2,1) both}
+h1 span:nth-child(2){animation-delay:.12s}
+h1 span:nth-child(3){animation-delay:.24s}
+h1 .hit{color:var(--signal);animation-delay:.55s}
+@keyframes rise{from{transform:translateY(.35em);opacity:0}to{transform:none;opacity:1}}
+h2{font-size:clamp(2.5rem,7.5vw,5.5rem);text-transform:uppercase}
+h3{font-size:1.5rem;font-weight:600;letter-spacing:-.01em;line-height:1.1}
+p{margin:0;max-width:60ch}
+
+/* headings and blocks slide out from behind an edge as they enter view */
+.arm .rv{opacity:0;transform:translateY(46px)}
+.arm .rv.in{opacity:1;transform:none;transition:opacity .8s ease,transform .9s cubic-bezier(.2,.7,.2,1)}
+
+header{padding-top:clamp(1rem,3vw,2rem);display:flex;flex-direction:column;gap:1.75rem}
+.lede{font-size:1.5rem;line-height:1.45;max-width:42ch}
+.down{font:500 .875rem var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--haze);animation:bob 1.8s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(7px)}}
+
+section{display:flex;flex-direction:column;gap:1.75rem;scroll-margin-top:4rem}
+.head{display:flex;flex-direction:column;gap:.75rem}
+.prose{display:flex;flex-direction:column;gap:1rem}
+.split{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:clamp(1.5rem,4vw,3.5rem);align-items:start}
+@media (max-width:780px){.split{grid-template-columns:1fr}}
+
+figure{margin:0;display:flex;flex-direction:column;gap:.6rem}
+.frame{position:relative;aspect-ratio:2.39/1;background:var(--panel) center/cover no-repeat;border:1px solid var(--contour);overflow:hidden;display:flex;align-items:center;justify-content:center;transition:transform .35s ease,border-color .35s ease}
+.frame:hover{transform:scale(1.015);border-color:var(--signal)}
+.frame.tall{aspect-ratio:4/3}
+.frame video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}
+.frame.playing video{display:block}
+.slot{font:400 .8125rem/1.6 var(--mono);color:var(--haze);text-align:center;padding:1rem;max-width:44ch}
+.slot b{display:block;color:var(--ice);font-weight:500;letter-spacing:.1em;text-transform:uppercase}
+.frame.has-still .slot{display:none}
+.play{display:none;position:absolute;left:1rem;bottom:1rem;font:500 .8125rem var(--mono);letter-spacing:.1em;text-transform:uppercase;background:var(--signal);color:var(--bg);border:0;padding:.6rem .9rem;cursor:pointer}
+.frame.has-clip:not(.playing) .play{display:block}
+figcaption{font:400 .875rem/1.6 var(--mono);color:var(--haze);max-width:70ch}
+
+.forkbox{background:var(--panel);border:1px solid var(--contour);padding:1.25rem;display:flex;flex-direction:column;gap:1rem}
+.fork text{font:500 10px var(--mono);letter-spacing:.1em;fill:var(--haze)}
+.fork path.l,.fork path.r{fill:none;stroke-linecap:round;stroke:var(--haze);stroke-width:2;stroke-dasharray:5 7;transition:stroke .3s}
+.fork[data-pick="left"] path.l,.fork[data-pick="right"] path.r{stroke:var(--signal);stroke-width:3.5;stroke-dasharray:440;animation:ski 1.3s ease-out both}
+@keyframes ski{from{stroke-dashoffset:440}to{stroke-dashoffset:0}}
+.fork .rock{fill:var(--glow)}
+.picks{display:flex;gap:.75rem;flex-wrap:wrap}
+.picks button{font:500 .8125rem var(--mono);letter-spacing:.12em;text-transform:uppercase;padding:.7rem 1rem;background:transparent;color:var(--ice);border:1px solid var(--haze);cursor:pointer}
+.picks button[aria-pressed="true"]{background:var(--signal);border-color:var(--signal);color:var(--bg)}
+.outcome{min-height:5.5em}
+.outcome strong{display:block;font:500 .875rem var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--glow);margin-bottom:.4rem}
+
+.box{list-style:none;margin:0;padding:0;border-top:1px solid var(--contour)}
+.box li{display:grid;grid-template-columns:5.5rem minmax(9rem,15rem) minmax(0,1fr);gap:.25rem 1.5rem;padding:1.15rem 0;border-bottom:1px solid var(--contour);transition:transform .25s ease,background .25s ease}
+.box li:hover{transform:translateX(10px);background:linear-gradient(90deg,rgba(255,90,144,.14),transparent 70%)}
+.box li:hover .no{color:var(--signal)}
+.box .no{font:500 .8125rem var(--mono);letter-spacing:.12em;color:var(--haze);padding-top:.4rem}
+@media (max-width:640px){.box li{grid-template-columns:1fr}}
+
+.frame.vert{aspect-ratio:9/16}
+.shots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(1rem,2.5vw,1.75rem);align-items:start}
+.shot{display:flex;flex-direction:column;gap:.6rem}
+.step{font:500 .8125rem var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--haze)}
+@media (max-width:780px){.shots{grid-template-columns:1fr;max-width:26rem}}
+
+/* three films, three shapes. They step down the page like turns: left, right, back to the middle. */
+.films{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:clamp(1rem,2.5vw,1.75rem);row-gap:clamp(2.5rem,6vw,4rem);align-items:start}
+.film{display:flex;flex-direction:column;gap:.7rem}
+.film p{font-size:1.125rem;color:var(--haze)}
+.film .note{display:flex;flex-direction:column;gap:.7rem}
+.film.a{grid-column:1/5}
+.film.b{grid-column:5/13;margin-top:clamp(3rem,9vw,7rem)}
+.film.c{grid-column:4/13;flex-direction:row;align-items:flex-end;gap:clamp(1rem,2.5vw,1.75rem)}
+.film.c figure{flex:0 0 44%}
+@media (max-width:780px){
+  .films{grid-template-columns:1fr}
+  .film.a,.film.b,.film.c{grid-column:auto;margin-top:0}
+  .film.a{width:78%}
+  .film.c{width:78%;margin-left:auto;flex-direction:column;align-items:stretch}
+  .film.c figure{flex:none}
+}
+
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th{font:500 .8125rem var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--haze);text-align:left}
+th,td{padding:.8rem 1.25rem .8rem 0;border-bottom:1px solid var(--contour);white-space:nowrap}
+td:last-child{font-family:var(--display);font-weight:800;font-size:1.5rem;color:var(--signal)}
+
+footer{display:flex;flex-direction:column;gap:1.25rem;border-top:1px solid var(--contour);padding-top:2rem}
+.mail{font-family:var(--display);font-weight:800;font-size:clamp(1.5rem,4.6vw,3.25rem);letter-spacing:-.02em;overflow-wrap:anywhere;text-decoration-thickness:3px}
+
+@media (prefers-reduced-motion:reduce){
+  h1 span,.fork path,#whiteout.go,.down{animation:none!important}
+  .box li,.frame{transition:none}
+  #fx{display:none}
+}
+</style>
+</head>
+<body>
+<canvas id="fx" aria-hidden="true"></canvas>
+<div id="whiteout" aria-hidden="true"></div>
+<div class="hud"><span>Jasper Tristan Pong</span><span>Run <b id="pct">000</b>%</span></div>
+
+<main class="wrap">
+<svg id="run" aria-hidden="true"><path/><circle r="6"/></svg>
+<div class="band night"><canvas id="terrain" aria-hidden="true"></canvas><div class="inner">
+
+<header>
+  <p class="tag">Freeride skier, Innsbruck</p>
+  <h1><span>There is no</span><span>backtest</span><span>for a line.</span><span class="hit">You get one run.</span></h1>
+  <p class="lede">I take things apart to see how they work. It started with toys. Now it is data, markets and mountain faces. Scroll down and ski the page with me.</p>
+  <figure>
+    <div class="frame" data-media="hero">
+      <video muted playsinline loop preload="none"></video>
+      <div class="slot"><b>Film clip</b>St. Anton</div>
+      <button class="play" type="button">Play clip</button>
+    </div>
+    <figcaption>St. Anton. A drop off a rock band, filmed for the ski film I made with friends.</figcaption>
+  </figure>
+  <p class="down">Drop in ↓</p>
+</header>
+
+<section id="line">
+  <div class="head rv">
+    <p class="tag">Kühtai, competition day</p>
+    <h2>The line I did not ski</h2>
+  </div>
+  <div class="split">
+    <div class="prose">
+      <p>At Kühtai I found a line on the right side of the face that nobody else had seen. My coach said he would never have spotted it, and that it was my call. Skied cleanly, I believed it could win.</p>
+      <p>There was one rock in the landing.</p>
+      <p>By the next morning I had taken the whole face apart. Then I had to pick a side.</p>
+    </div>
+    <div class="rv forkbox">
+      <svg class="fork" id="fork" data-pick="left" viewBox="0 0 320 232" role="img" aria-label="The Kühtai face with two lines from the start. Left and right. One rock sits in the right landing.">
+        <path class="r" d="M160 22C160 58 176 70 196 96S252 158 256 204"/>
+        <path class="l" d="M160 22C160 58 144 70 124 96S68 158 64 204"/>
+        <path class="rock" d="M234 174l9-12 11 7 4 12-15 4z"/>
+        <circle cx="160" cy="22" r="5" fill="#eaf2f6"/>
+        <text x="172" y="20">START</text>
+        <text x="64" y="224" text-anchor="middle">LEFT</text>
+        <text x="256" y="224" text-anchor="middle">RIGHT</text>
+        <text x="268" y="172">ROCK</text>
+      </svg>
+      <div class="picks">
+        <button type="button" id="pick-left" aria-pressed="true">Left, what I skied</button>
+        <button type="button" id="pick-right" aria-pressed="false">Right, what nobody skied</button>
+      </div>
+      <p class="outcome" id="outcome" aria-live="polite"><strong>Left</strong>I chose left. On my last jump a slide of snow took my vision. I landed blind and crashed.</p>
+    </div>
+  </div>
+</section>
+
+</div></div>
+<div class="band dawn"><svg class="ridge" viewBox="0 0 1200 80" preserveAspectRatio="none" aria-hidden="true"><path fill="currentColor" d="M0 80V52l70-30 55 22 85-40 60 34 95-26 70 30 110-44 75 38 90-22 80 30 105-46 70 34 85-20 75 28 75-18v78z"/></svg><div class="inner">
+<section id="bus">
+  <div class="head rv">
+    <p class="tag">SlopeShare, started April 2026</p>
+    <h2>The bus that did not stop</h2>
+  </div>
+  <div class="prose">
+    <p>On the way to the resorts I kept watching full buses and trams drive past people who were waiting.</p>
+    <p>SlopeShare is my answer for now. It is a ride-sharing platform for people travelling to Austrian ski resorts. Friends have tested it and it works. It is still in beta and not public yet.</p>
+    <p>I am not trying to make money from it. The real goal is better public transport to the mountains.</p>
+  </div>
+  <figure>
+    <div class="shots">
+      <div class="rv shot"><span class="step">01 Request</span><div class="frame" style="aspect-ratio:1006/1234" data-media="slopeshare-1"><div class="slot"><b>SlopeShare</b>Request a ride</div></div></div>
+      <div class="rv shot"><span class="step">02 Waiting</span><div class="frame" style="aspect-ratio:984/734" data-media="slopeshare-2"><div class="slot"><b>SlopeShare</b>Waiting for a driver</div></div></div>
+      <div class="rv shot"><span class="step">03 Matched</span><div class="frame" style="aspect-ratio:960/1450" data-media="slopeshare-3"><div class="slot"><b>SlopeShare</b>Matched with a driver</div></div></div>
+    </div>
+    <figcaption>One ride from request to match, Innsbruck Marktplatz to Axamer Lizum. The price comes from the distance and is locked when you request, so it does not change with the route or traffic.</figcaption>
+  </figure>
+</section>
+
+<section id="box">
+  <div class="head rv">
+    <p class="tag">Things I have taken apart</p>
+    <h2>The box</h2>
+  </div>
+  <ul class="rv box">
+    <li><span class="no">Part 01</span><h3>A robot, age eight</h3><span>Built from old toys I had opened up. It had three switches. Left, right, magnet. The parts still live in a box in my room.</span></li>
+    <li><span class="no">Part 02</span><h3>My nerves</h3><span>In the start gate I sing a ridiculous song in my head. I checked it at home with a heart-rate watch. It works.</span></li>
+    <li><span class="no">Part 03</span><h3>The market</h3><span>I tested whether mechanical trading rules still make money after realistic costs. I found nothing, and that was the answer.</span></li>
+    <li><span class="no">Part 04</span><h3>A grade</h3><span>A desktop app that predicts IB grades and works out the marks still needed to reach a target.</span></li>
+    <li><span class="no">Part 05</span><h3>A mountain face</h3><span>See above. Taking it apart was the easy part.</span></li>
+  </ul>
+</section>
+
+</div></div>
+<div class="band day"><svg class="ridge" viewBox="0 0 1200 80" preserveAspectRatio="none" aria-hidden="true"><path fill="currentColor" d="M0 80V52l70-30 55 22 85-40 60 34 95-26 70 30 110-44 75 38 90-22 80 30 105-46 70 34 85-20 75 28 75-18v78z"/></svg><div class="inner">
+<section id="film">
+  <div class="head rv">
+    <p class="tag">Made with friends</p>
+    <h2>Film</h2>
+  </div>
+  <div class="films">
+    <div class="rv film a">
+      <figure><div class="frame vert" data-media="film-nz"><video muted playsinline loop preload="none"></video><div class="slot"><b>Film clip</b>New Zealand</div><button class="play" type="button">Play clip</button></div></figure>
+      <h3>New Zealand</h3>
+      <p>A ski film shot with friends.</p>
+    </div>
+    <div class="rv film b">
+      <figure><div class="frame tall" data-media="film-tirol"><video muted playsinline loop preload="none"></video><div class="slot"><b>Film clip</b>Winter 2025/26</div><button class="play" type="button">Play clip</button></div></figure>
+      <h3>Winter 2025/26</h3>
+      <p>Axamer Lizum, Nordkette, St. Anton and Ischgl, filmed from December to April.</p>
+    </div>
+    <div class="rv film c">
+      <figure><div class="frame vert" data-media="film-abstract"><video muted playsinline loop preload="none"></video><div class="slot"><b>Film clip</b>Next, 2026/27</div><button class="play" type="button">Play clip</button></div></figure>
+      <div class="note">
+        <h3>Next, 2026/27</h3>
+        <p>An abstract ski film. In planning.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="results">
+  <div class="head rv">
+    <p class="tag">Freeride competition</p>
+    <h2>Results</h2>
+  </div>
+  <div class="rv tablewrap">
+    <table>
+      <thead><tr><th>Event</th><th>Level</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td>FWT Junior, Baqueira Beret, 2026</td><td>3 star</td><td>2nd</td></tr>
+        <tr><td>FWT Junior, Narvik, 2026</td><td>3 star</td><td>2nd</td></tr>
+        <tr><td>FWT Junior, Montafon, 2026</td><td>3 star</td><td>3rd</td></tr>
+        <tr><td>Kühtai, two years running</td><td>1 star</td><td>1st, twice</td></tr>
+        <tr><td>First freeride competition entered</td><td></td><td>1st</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>I train in the Stefan Häusl freeride group.</p>
+</section>
+
+<footer>
+  <p class="tag">Run out. Hong Kong, Germany, Innsbruck</p>
+  <p>Born in Hong Kong. In Germany until I was about four. Then Innsbruck, because my family wanted the mountains. I am finishing the IB Diploma and the Austrian Matura at the Akademisches Gymnasium Innsbruck.</p>
+  <a class="rv mail" href="mailto:jaspertristan@icloud.com">jaspertristan@icloud.com</a>
+</footer>
+</div></div>
+</main>
+
+<script>
+(function () {
+  var calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* 1. Terrain. Stacked ridgelines drawn on a fixed canvas. They drift as you descend. */
+  var cv = document.getElementById('terrain'), cx = cv.getContext('2d');
+  var peaks = [];
+  for (var i = 0; i < 9; i++) {
+    peaks.push({ x: (i * 0.137 + 0.08) % 1, w: 0.05 + ((i * 7) % 5) * 0.022, h: 0.35 + ((i * 3) % 4) * 0.2 });
+  }
+  function ridge(x, row, shift) {
+    var y = 0;
+    for (var k = 0; k < peaks.length; k++) {
+      var p = peaks[k];
+      var c = (p.x + row * 0.011 * (k % 2 ? 1 : -1) + shift * (0.3 + k * 0.05)) % 1;
+      if (c < 0) c += 1;
+      var d = (x - c) / p.w;
+      y += p.h * Math.exp(-d * d);
+    }
+    return y + 0.06 * Math.sin(x * 40 + row * 0.9);
+  }
+  function drawTerrain() {
+    var w = cv.clientWidth, h = cv.clientHeight, dpr = Math.min(window.devicePixelRatio || 1, 2);
+    if (cv.width !== w * dpr || cv.height !== h * dpr) { cv.width = w * dpr; cv.height = h * dpr; }
+    cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    cx.clearRect(0, 0, w, h);
+    var rows = 26, shift = calm ? 0 : window.scrollY * 0.00006;
+    for (var r = 0; r < rows; r++) {
+      var base = h * (0.2 + 0.85 * r / rows), amp = h * 0.11;
+      cx.beginPath();
+      cx.moveTo(0, h);
+      for (var px = 0; px <= w + 8; px += 8) {
+        cx.lineTo(px, base - amp * ridge(px / w, r, shift));
+      }
+      cx.lineTo(w, h);
+      cx.closePath();
+      cx.fillStyle = '#07131f';
+      cx.fill();
+      cx.strokeStyle = 'rgba(84,140,180,' + (0.2 + 0.4 * r / rows).toFixed(2) + ')';
+      cx.lineWidth = 1;
+      cx.stroke();
+    }
+  }
+
+  /* 2. The run. One line down the left lane, skied as far as you have scrolled. */
+  var run = document.getElementById('run'), path = run.querySelector('path'), dot = run.querySelector('circle');
+  var wrap = document.querySelector('.wrap'), pct = document.getElementById('pct'), len = 0;
+  function buildRun() {
+    var H = wrap.offsetHeight, W = run.getBoundingClientRect().width || 60;
+    run.setAttribute('height', H);
+    run.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    var a = W * 0.24, b = W * 0.76, step = Math.max(240, window.innerHeight * 0.42);
+    var d = 'M' + (W / 2) + ' 70', y = 70, side = 0;
+    while (y + step < H - 40) {
+      var x = side ? a : b, ny = y + step;
+      d += ' C' + (side ? b : a) + ' ' + (y + step * 0.45) + ' ' + x + ' ' + (y + step * 0.55) + ' ' + x + ' ' + ny;
+      y = ny; side = 1 - side;
+    }
+    path.setAttribute('d', d);
+    len = path.getTotalLength();
+    path.style.strokeDasharray = len;
+    onScroll();
+  }
+  function onScroll() {
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    var p = calm || max <= 0 ? 1 : Math.min(1, Math.max(0.02, window.scrollY / max));
+    path.style.strokeDashoffset = len * (1 - p);
+    var pt = path.getPointAtLength(len * p);
+    dot.setAttribute('cx', pt.x);
+    dot.setAttribute('cy', pt.y);
+    var shown = max <= 0 ? 0 : Math.round(100 * Math.min(1, window.scrollY / max));
+    pct.textContent = ('00' + shown).slice(-3);
+    drawTerrain();
+  }
+  var ticking = false;
+  window.addEventListener('scroll', function () {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function () { ticking = false; onScroll(); });
+  }, { passive: true });
+  var rs;
+  window.addEventListener('resize', function () { clearTimeout(rs); rs = setTimeout(buildRun, 150); });
+  buildRun();
+  window.addEventListener('load', buildRun);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(buildRun);
+
+  /* 3. The fork. Left is what happened. Right is what nobody skied. */
+  var fork = document.getElementById('fork'), out = document.getElementById('outcome');
+  var bl = document.getElementById('pick-left'), br = document.getElementById('pick-right'), wo = document.getElementById('whiteout');
+  var words = {
+    left: '<strong>Left</strong>I chose left. On my last jump a slide of snow took my vision. I landed blind and crashed.',
+    right: '<strong>Right</strong>Nobody skied the right side that day. I still think I could have.'
+  };
+  function whiteout() {
+    if (calm) return;
+    wo.classList.remove('go');
+    void wo.offsetWidth;
+    wo.classList.add('go');
+  }
+  function pick(side) {
+    fork.setAttribute('data-pick', '');
+    void fork.getBoundingClientRect();
+    fork.setAttribute('data-pick', side);
+    bl.setAttribute('aria-pressed', side === 'left');
+    br.setAttribute('aria-pressed', side === 'right');
+    out.innerHTML = words[side];
+    if (side === 'left') setTimeout(whiteout, 1100);
+  }
+  bl.addEventListener('click', function () { pick('left'); });
+  br.addEventListener('click', function () { pick('right'); });
+  if ('IntersectionObserver' in window) {
+    var seen = new IntersectionObserver(function (entries) {
+      if (entries[0].isIntersecting) { seen.disconnect(); pick('left'); }
+    }, { threshold: 0.6 });
+    seen.observe(fork);
+  }
+
+  /* 4. Media slots. Looks for media/<name>.jpg and media/<name>.mp4 next to this file. Clips never autoplay. */
+  document.querySelectorAll('.frame[data-media]').forEach(function (frame) {
+    var name = frame.getAttribute('data-media');
+    var still = new Image();
+    still.onload = function () {
+      frame.style.backgroundImage = 'url("media/' + name + '.jpg")';
+      frame.classList.add('has-still');
+    };
+    still.src = 'media/' + name + '.jpg';
+    var video = frame.querySelector('video'), button = frame.querySelector('.play');
+    if (!video || !button) return;
+    var probe = document.createElement('video');
+    probe.preload = 'metadata';
+    probe.onloadedmetadata = function () { frame.classList.add('has-clip'); };
+    probe.src = 'media/' + name + '.mp4';
+    button.addEventListener('click', function () {
+      video.src = 'media/' + name + '.mp4';
+      frame.classList.add('playing');
+      video.play().catch(function () { frame.classList.remove('playing'); });
+    });
+  });
+  /* 5. Reveal. Headings and blocks slide out from behind an edge when they enter view. */
+  if ('IntersectionObserver' in window && !calm) {
+    document.body.classList.add('arm');
+    var rio = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); rio.unobserve(e.target); } });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.rv').forEach(function (el) { rio.observe(el); });
+  }
+
+  /* 6. Snow and spray. Flakes fall slowly. Scroll fast and they streak past as if you were descending.
+        On desktop the pointer leaves a short ski track. */
+  var fx = document.getElementById('fx');
+  if (!calm && fx.getContext) {
+    var fc = fx.getContext('2d'), flakes = [], trail = [], lastY = window.scrollY, vel = 0, fw = 0, fh = 0;
+    function sizeFx() {
+      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      fw = window.innerWidth; fh = window.innerHeight;
+      fx.width = fw * dpr; fx.height = fh * dpr;
+      fc.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    sizeFx();
+    window.addEventListener('resize', sizeFx);
+    var count = fw < 600 ? 45 : 90;
+    for (var f = 0; f < count; f++) {
+      flakes.push({ x: Math.random() * fw, y: Math.random() * fh, r: 0.6 + Math.random() * 1.8, s: 0.25 + Math.random() * 0.7, d: Math.random() * 6.28 });
+    }
+    window.addEventListener('pointermove', function (e) {
+      if (e.pointerType !== 'mouse') return;
+      trail.push({ x: e.clientX, y: e.clientY, t: performance.now() });
+      if (trail.length > 40) trail.shift();
+    }, { passive: true });
+    function frame(now) {
+      var sy = window.scrollY;
+      vel += ((sy - lastY) - vel) * 0.2;
+      lastY = sy;
+      fc.clearRect(0, 0, fw, fh);
+      fc.lineCap = 'round';
+      for (var i = 0; i < flakes.length; i++) {
+        var k = flakes[i], dy = k.s - vel * 0.45 * k.s;
+        k.d += 0.01;
+        k.x += Math.sin(k.d) * 0.3;
+        k.y += dy;
+        if (k.y > fh + 10) k.y = -10; else if (k.y < -10) k.y = fh + 10;
+        if (k.x > fw + 5) k.x = -5; else if (k.x < -5) k.x = fw + 5;
+        fc.strokeStyle = 'rgba(205,224,238,' + (0.25 + k.r * 0.2).toFixed(2) + ')';
+        fc.lineWidth = k.r * 1.6;
+        fc.beginPath();
+        fc.moveTo(k.x, k.y);
+        fc.lineTo(k.x, k.y - Math.max(-60, Math.min(60, dy * 2.2)) - 0.1);
+        fc.stroke();
+      }
+      while (trail.length && now - trail[0].t > 700) trail.shift();
+      for (var j = 1; j < trail.length; j++) {
+        var a = 1 - (now - trail[j].t) / 700;
+        fc.strokeStyle = 'rgba(255,61,127,' + (a * 0.8).toFixed(2) + ')';
+        fc.lineWidth = 1 + a * 3;
+        fc.beginPath();
+        fc.moveTo(trail[j - 1].x, trail[j - 1].y);
+        fc.lineTo(trail[j].x, trail[j].y);
+        fc.stroke();
+      }
+      if (!document.hidden) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) { lastY = window.scrollY; requestAnimationFrame(frame); } });
+  }
+})();
+</script>
+</body>
+</html>
