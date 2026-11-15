@@ -143,6 +143,11 @@ table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
 th{font:500 .8125rem var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--haze);text-align:left}
 th,td{padding:.8rem 1.25rem .8rem 0;border-bottom:1px solid var(--contour);white-space:nowrap}
 td:last-child{font-family:var(--display);font-weight:800;font-size:1.5rem;color:var(--signal)}
+/* on a phone the event name wraps so the level and the result stay on screen */
+@media (max-width:600px){
+  td:first-child{white-space:normal}
+  th:last-child,td:last-child{padding-right:0}
+}
 
 footer{display:flex;flex-direction:column;gap:1.25rem;border-top:1px solid var(--contour);padding-top:2rem}
 .mail{font-family:var(--display);font-weight:800;font-size:clamp(1.5rem,4.6vw,3.25rem);letter-spacing:-.02em;overflow-wrap:anywhere;text-decoration-thickness:3px}
